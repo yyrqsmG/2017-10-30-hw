@@ -1,140 +1,132 @@
 #include <iostream>
+#include <cstdlib>
 #include <cstring>
 using namespace std;
 
 class LLIST{
     public:
-        LLIST()
-        {
-            next = NULL;
-        }
         int m_data;
-        LLIST *next;
+        LLIST *m_next;
+		LLIST(int data):m_data(data), m_next(NULL)
+		{}
 };
 
 class Slist{
-    public:
-        unsigned int m_l;//元素个数
+    private:
         LLIST *m_head;//头结点
         LLIST *m_last;//尾节点
-        LLIST *m_node;//临时节点
     public:
-        Slist()
+        Slist(void)
         {
-            m_l = 0;
-            m_head = NULL;
-            m_last = NULL;
-            m_node = NULL;
+            m_head = new LLIST(0);
+            m_last = m_head;
         }
-        void add(int x)//表尾添加元素
+		~Slist(void)
+		{
+			LLIST *tmp;
+			for(tmp = m_head; tmp; tmp = tmp->m_next)
+			{
+				delete tmp;
+			}
+		}
+        void instail(LLIST *node)//表尾添加一个节点
         {
-            m_node = new LLIST;
-            m_node->m_data = x;
-            if(m_last == NULL)
-            {
-                m_head = m_node;
-                m_last = m_node;
-            }
+			if(m_head == m_last)
+			{
+				m_head->m_next = node;
+				m_last = node;
+			}
             else
             {
-                m_last->next = m_last;
-                m_last = m_node;
+                m_last->m_next = node;
+                m_last = node;
             }
-            m_l++;
         }
-        void inserthead(int x)
+        LLIST *inshead(void)//从头部获得节点
         {
-            m_node = new LLIST;
-            m_node->m_data = x;
-            m_node->next = m_head;
-            m_head = m_node;
+			return m_head->m_next;
         }
-        void removetail()
+        void removetail(void)//删除尾部节点
         {
-            m_node = m_head;
-            while(m_node != m_last)
+            LLIST *tmp = m_last;
+            if(tmp != m_head)
             {
-                m_node = m_node->next;
-            }
-            if(m_node == m_last)
-            {
-                m_last = m_node;
-                delete m_node;
-                m_node = NULL;
+                delete tmp;
             }
         }
-        void removehead()
+        void removehead()//删除头结点
         {
-            m_node = m_head;
-            m_head = m_node->next;
-            if(m_head->next == NULL)
-                m_last = NULL;
-            delete m_node;
+            LLIST *tmp = m_head->m_next;
+			if(m_head != m_last)
+			{
+				if(tmp = m_last)
+				{
+					delete tmp;
+					m_last = m_head;
+				}
+				else
+				{
+					m_head->m_next = tmp->m_next;
+					delete tmp;
+				}
+			}
         }
+		void travel(void)
+		{
+			LLIST *tmp;
+			if(m_head == m_last)
+			  cout<<"链表为空";
+			else
+			  for(tmp = m_head->m_next; tmp; tmp = tmp->m_next)
+			  {
+				  cout<<tmp->m_data<<"\t";
+			  }
+			cout<<endl;
+		}
 };
 
 class QUE{
+	private:
+		Slist m_list;//类里保存数据的地方
     public:
-		Slist list;
-        QUE(void)
+        void inq(LLIST *node)//入队
         {
-            list.m_head = NULL;
-            list.m_last = NULL;
+            m_list.instail(node);
         }
-        ~QUE(void)
+        LLIST *outq(void)
         {
-            while(list.m_head != NULL)
-            {
-                list.m_node = list.m_head;
-                list.m_head = list.m_head->next;
-            }
+            LLIST *tmp = new LLIST(0);
+			if(m_list.inshead())
+			  memcpy(tmp, m_list.inshead(), sizeof(LLIST));
+            m_list.removehead();
+			return tmp;
         }
-        void inq()
+        void travel(void)
         {
-            list.m_node = list.m_head;
-            list.m_head = list.m_head->next;
-            if(list.m_head == NULL)
-                list.m_last = NULL;
-        }
-        void outq()
-        {
-            LLIST *p = new LLIST;
-            //p->m_data = value;
-            p->next = NULL;
-            if(list.m_last != NULL)
-            {
-                list.m_last->next = p;
-            }
-            else
-            {
-                list.m_head = p;
-            }
-            list.m_last = p;
-        }
-        void show()
-        {
-            list.m_node = list.m_head;
-            while(list.m_node != NULL)
-            {
-                cout<<list.m_node->m_data<<'\t';
-                list.m_node = list.m_node->next;
-            }
-            cout<<endl;
+			m_list.travel();
         }
 };
 
 int main(void)
 {
-    Slist list;
-    list.inserthead(25);
-    list.add(10);
-    list.add(11);
-    list.add(12);
-    list.removetail();
-    list.removehead();
-
     QUE queue;
-    queue.inq();
-    queue.outq();
-    queue.show();
+	LLIST *n1 = new LLIST(1);
+	LLIST *n2 = new LLIST(10);
+	LLIST *n3 = new LLIST(23);
+	LLIST *n4 = new LLIST(89);
+    queue.inq(n1);
+    queue.inq(n2);
+    queue.inq(n3);
+    queue.inq(n4);
+	queue.travel();
+
+    //queue.outq();
+	cout<<"出队后"<<endl;
+	queue.outq();
+	queue.travel();
+	cout<<"入队后"<<endl;
+	//queue.travel();
+	LLIST *n5 = new LLIST(54);
+	queue.inq(n5);
+	queue.travel();
 }
