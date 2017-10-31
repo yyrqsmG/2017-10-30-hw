@@ -13,7 +13,7 @@ class LLIST{
 };
 
 class Slist{
-    private:
+    public:
         unsigned int m_l;//元素个数
         LLIST *m_head;//头结点
         LLIST *m_last;//尾节点
@@ -54,7 +54,7 @@ class Slist{
             m_node = m_head;
             while(m_node != m_last)
             {
-                node = node->next;
+                m_node = m_node->next;
             }
             if(m_node == m_last)
             {
@@ -67,66 +67,65 @@ class Slist{
         {
             m_node = m_head;
             m_head = m_node->next;
-            if(temp->next == NULL)
+            if(m_head->next == NULL)
                 m_last = NULL;
             delete m_node;
         }
 };
 
 class QUE{
-    private:
-        class Slist;
     public:
+		Slist list;
         QUE(void)
         {
-            m_head = NULL;
-            m_last = NULL;
+            list.m_head = NULL;
+            list.m_last = NULL;
         }
         ~QUE(void)
         {
-            while(m_head != NULL)
+            while(list.m_head != NULL)
             {
-                m_node = m_head;
-                m_head = m_head->next;
+                list.m_node = list.m_head;
+                list.m_head = list.m_head->next;
             }
         }
         void inq()
         {
-            m_node = m_head;
-            m_head = m_head->next;
-            if(m_head == NULL)
-                m_last = NULL;
+            list.m_node = list.m_head;
+            list.m_head = list.m_head->next;
+            if(list.m_head == NULL)
+                list.m_last = NULL;
         }
-        void outq(int value)
+        void outq()
         {
             LLIST *p = new LLIST;
-            p->m_data = value;
+            //p->m_data = value;
             p->next = NULL;
-            if(m_last != NULL)
+            if(list.m_last != NULL)
             {
-                m_last->next = p;
+                list.m_last->next = p;
             }
             else
             {
-                m_head = p;
+                list.m_head = p;
             }
-            m_last = p;
+            list.m_last = p;
         }
         void show()
         {
-            m_node = m_head;
-            while(m_node != NULL)
+            list.m_node = list.m_head;
+            while(list.m_node != NULL)
             {
-                cout<<m_node->m_data<<'\t';
-                m_node = m_node->next;
+                cout<<list.m_node->m_data<<'\t';
+                list.m_node = list.m_node->next;
             }
             cout<<endl;
         }
-}
+};
 
 int main(void)
 {
-    Slist list();
+    Slist list;
     list.inserthead(25);
     list.add(10);
     list.add(11);
@@ -134,7 +133,7 @@ int main(void)
     list.removetail();
     list.removehead();
 
-    QUE queue();
+    QUE queue;
     queue.inq();
     queue.outq();
     queue.show();
